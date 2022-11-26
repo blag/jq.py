@@ -94,6 +94,20 @@ jq_extension = Extension(
     ],
 )
 
+setup_kwargs = {}
+if os.environ.get("USE_SYSTEM_LIBRARIES"):
+    jq_extension = Extension(
+        "jq",
+        sources=["jq.c"],
+        libraries=["jq"],
+    )
+else:
+    setup_kwargs = {
+        "cmdclass": {
+            "build_ext": jq_build_ext,
+        },
+    }
+
 setup(
     name='jq',
     version='1.3.0',
@@ -104,7 +118,6 @@ setup(
     python_requires='>=3.5',
     license='BSD 2-Clause',
     ext_modules = [jq_extension],
-    cmdclass={"build_ext": jq_build_ext},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -119,5 +132,5 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
     ],
+    **setup_kwargs,
 )
-
